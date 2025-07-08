@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Birthday Card</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500&family=Raleway:wght@400;600&display=swap');
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #f3f4f6, #e8eaf6);
+      font-family: 'Raleway', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding-top: 140px;
+      box-sizing: border-box;
+    }
+
+    .happy-birthday-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: 4rem;
+      color: #222;
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      user-select: none;
+      pointer-events: none;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2px;
+      z-index: 2;
+    }
+
+    .happy-birthday-text span {
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: letterReveal 0.6s ease forwards;
+      display: inline-block;
+    }
+
+    @keyframes letterReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scene {
+      width: 100vw;
+      height: calc(100vh - 150px);
+      perspective: 2000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      width: 500px;
+      height: 650px;
+      position: relative;
+      transition: transform 1.2s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      background: transparent;
+      z-index: 3;
+    }
+
+    .card.opened {
+      transform: rotateY(-180deg);
+      width: 1000px;
+    }
+
+    .card-front {
+      position: absolute;
+      width: 500px;
+      height: 100%;
+      left: 0;
+      top: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      background: linear-gradient(to bottom right, #ede7f6, #e3f2fd);
+      background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+      gap: 20px;
+    }
+
+    .card-front h2 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 42px;
+      color: #4a148c;
+      margin: 0;
+      text-align: center;
+    }
+
+    .photo-box {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 16px;
+      border: 4px dashed #999;
+      background: #fff url('img.jpeg') center center / cover no-repeat;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .photo-box .corner-balloon {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background-color: #9575cd;
+      border-radius: 50% 50% 45% 45%;
+      z-index: 2;
+    }
+
+    .photo-box .corner-balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      width: 2px;
+      height: 15px;
+      background: #333;
+      transform: translateX(-50%);
+    }
+
+    .balloon-top-left {
+      top: -10px;
+      left: -10px;
+      transform: rotate(-10deg);
+    }
+
+    .balloon-top-right {
+      top: -10px;
+      right: -10px;
+      transform: rotate(10deg);
+    }
+
+    .card-inside {
+      position: absolute;
+      width: 1000px;
+      height: 100%;
+      left: 0;
+      top: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      background: linear-gradient(to bottom right, #ede7f6, #e3f2fd);
+      background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+      background-repeat: repeat;
+      padding: 20px 0;
+      box-sizing: border-box;
+      transform: rotateY(180deg);
+      transform-style: preserve-3d;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .left-page, .right-page {
+      width: 50%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 15px;
+      padding: 20px 30px;
+      box-sizing: border-box;
+    }
+
+    .wish {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #333;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-weight: 500;
+    }
+
+    .floating-balloon {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background-color: #ba68c8;
+      border-radius: 50% 50% 45% 45%;
+      animation: floatUp 10s linear infinite;
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .floating-balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      width: 2px;
+      height: 15px;
+      background: #333;
+      transform: translateX(-50%);
+    }
+
+    @keyframes floatUp {
+      0% { bottom: -60px; opacity: 0; transform: translateX(0); }
+      20% { opacity: 1; }
+      100% { bottom: 110vh; transform: translateX(30px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="happy-birthday-text" id="animatedText"></div>
+
+  <div class="scene">
+    <div class="card" id="birthdayCard">
+      <div class="card-front">
+        <h2>Wish You a Happy Birthday!!</h2>
+        <div class="photo-box">
+          <div class="corner-balloon balloon-top-left"></div>
+          <div class="corner-balloon balloon-top-right"></div>
+        </div>
+        <p style="margin-top: 20px; font-size: 16px; color: #555;">Click to open your birthday surprise!</p>
+      </div>
+      <div class="card-inside">
+        <div class="left-page" id="leftWishes"></div>
+        <div class="right-page" id="rightWishes"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const card = document.getElementById('birthdayCard');
+    const leftWishes = document.getElementById('leftWishes');
+    const rightWishes = document.getElementById('rightWishes');
+
+    const emojis = ["🎉", "🎈", "🥳", "✨", "🎁", "💖", "🍰", "💫", "🎂"];
+
+    const wishes = [
+      "Have a truly wonderful day!",
+      "Wishing you peace, joy, and success.",
+      "May your birthday be filled with happiness.",
+      "Enjoy your special day!",
+      "Your dedication is appreciated.",
+      "Warmest birthday wishes to you.",
+      "Wishing you continued achievements.",
+      "Have a joyful year ahead!",
+      "You're valued and respected.",
+      "Thank you for your leadership.",
+      "Many happy returns of the day.",
+      "May today be as amazing as you are.",
+      "Celebrating you and your work.",
+      "Here’s to more milestones!",
+      "Happy Birthday Madam!",
+      "You're an inspiration.",
+      "Wishing you strength and smiles.",
+      "Have a relaxing and blessed day.",
+      "Wishing you success and health.",
+      "Grateful to work with you.",
+      "More power and positivity to you.",
+      "You’re admired for all you do.",
+      "Happy moments ahead!",
+      "Cheers to your amazing journey.",
+      "Your impact is appreciated.",
+      "Thank you for everything!",
+      "A special wish for a special person.",
+      "May all your wishes come true.",
+      "Health, happiness & prosperity!",
+      "You make a difference daily."
+    ];
+
+    const leftWishesArr = wishes.slice(0, 15);
+    const rightWishesArr = wishes.slice(15, 30);
+
+    function renderWishes(container, wishesArray) {
+      wishesArray.forEach(text => {
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        const wish = document.createElement('div');
+        wish.classList.add('wish');
+        wish.innerHTML = `${emoji} ${text} ${emoji}`;
+        container.appendChild(wish);
+      });
+    }
+
+    renderWishes(leftWishes, leftWishesArr);
+    renderWishes(rightWishes, rightWishesArr);
+
+    card.addEventListener('click', () => {
+      card.classList.toggle('opened');
+    });
+
+    // Heading animation
+    const text = "Wish You a Happy Birthday!!";
+    const headingContainer = document.getElementById("animatedText");
+
+    [...text].forEach((char, index) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.animationDelay = `${index * 0.08}s`;
+      headingContainer.appendChild(span);
+    });
+
+    // Create floating balloons
+    function createFloatingBalloons() {
+      for (let i = 0; i < 25; i++) {
+        const balloon = document.createElement('div');
+        balloon.classList.add('floating-balloon');
+        balloon.style.left = Math.random() * 100 + 'vw';
+        balloon.style.bottom = '-80px';
+        balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 70%)`;
+        balloon.style.animationDelay = Math.random() * 8 + 's';
+        document.body.appendChild(balloon);
+      }
+    }
+
+    createFloatingBalloons();
+  </script>
+
+</body>
+</html>
