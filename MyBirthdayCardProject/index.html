@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Birthday Card</title>
+  <title>Customizable Birthday Card</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500&family=Raleway:wght@400;600&display=swap');
 
@@ -18,17 +18,64 @@
       justify-content: center;
     }
 
-    body {
-      padding-top: 140px;
+    #customPanel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 999;
+      font-size: 14px;
+      max-width: 260px;
+    }
+
+    #customPanel h3 {
+      margin-top: 0;
+    }
+
+    #customPanel label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #4a148c;
+    }
+
+    #customPanel input[type="text"],
+    #customPanel textarea {
+      width: 100%;
       box-sizing: border-box;
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: 'Raleway', sans-serif;
+    }
+
+    #customPanel button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #4a148c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+    }
+    #customPanel button:hover {
+      background-color: #6a24bd;
     }
 
     .happy-birthday-text {
       font-family: 'Great Vibes', cursive;
       font-size: 4rem;
-      color: #222;
-      position: absolute;
-      top: 20px;
+      color: #4a148c;
+      position: fixed;
+      top: 10px;
+      left: 0;
       width: 100%;
       text-align: center;
       user-select: none;
@@ -38,7 +85,12 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 2px;
-      z-index: 2;
+      z-index: 9999;
+
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .happy-birthday-text span {
@@ -64,6 +116,8 @@
       align-items: center;
       position: relative;
       z-index: 1;
+      margin-top: 80px; /* space under heading */
+      overflow: visible;
     }
 
     .card {
@@ -77,11 +131,12 @@
       box-shadow: 0 12px 40px rgba(0,0,0,0.15);
       background: transparent;
       z-index: 3;
+      overflow: visible;
     }
 
     .card.opened {
       transform: rotateY(-180deg);
-      width: 1000px;
+      width: 500px;
     }
 
     .card-front {
@@ -101,6 +156,12 @@
       padding: 30px;
       box-sizing: border-box;
       gap: 20px;
+      overflow: hidden;
+    }
+
+    /* Hide cake container on front */
+    .card-front .cake-container {
+      display: none;
     }
 
     .card-front h2 {
@@ -111,52 +172,38 @@
       text-align: center;
     }
 
+    /* Photo box without border, with subtle fade-in shadow on back */
     .photo-box {
       position: relative;
       width: 280px;
       height: 280px;
-      border-radius: 16px;
-      border: 4px dashed #999;
-      background: #fff url('img.jpeg') center center / cover no-repeat;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      border-radius: 40px;
+      background: #fff;
+      box-shadow: none;
+      transition: box-shadow 1.2s ease, background-image 0.5s ease;
       overflow: hidden;
+      filter: drop-shadow(0 0 8px #f06292);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    /* On flip open, photo box shadow appears */
+    .card.opened .photo-box {
+      box-shadow:
+        0 0 30px 8px #ec407a,
+        inset 0 0 35px 7px #f06292;
+      background-color: #ffe6f0;
     }
 
-    .photo-box .corner-balloon {
-      position: absolute;
-      width: 40px;
-      height: 60px;
-      background-color: #9575cd;
-      border-radius: 50% 50% 45% 45%;
-      z-index: 2;
-    }
-
-    .photo-box .corner-balloon::after {
-      content: '';
-      position: absolute;
-      bottom: -15px;
-      left: 50%;
-      width: 2px;
-      height: 15px;
-      background: #333;
-      transform: translateX(-50%);
-    }
-
-    .balloon-top-left {
-      top: -10px;
-      left: -10px;
-      transform: rotate(-10deg);
-    }
-
-    .balloon-top-right {
-      top: -10px;
-      right: -10px;
-      transform: rotate(10deg);
+    .card-front p {
+      font-size: 16px;
+      color: #555;
+      margin-top: 20px;
     }
 
     .card-inside {
       position: absolute;
-      width: 1000px;
+      width: 500px;
       height: 100%;
       left: 0;
       top: 0;
@@ -165,35 +212,187 @@
       background: linear-gradient(to bottom right, #ede7f6, #e3f2fd);
       background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
       background-repeat: repeat;
-      padding: 20px 0;
       box-sizing: border-box;
       transform: rotateY(180deg);
       transform-style: preserve-3d;
       display: flex;
-      overflow: hidden;
-    }
-
-    .left-page, .right-page {
-      width: 50%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(5, 1fr);
-      gap: 15px;
-      padding: 20px 30px;
-      box-sizing: border-box;
-    }
-
-    .wish {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      color: #333;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      font-weight: 500;
+      color: #4a148c;
+      font-family: 'Raleway', sans-serif;
+      font-size: 20px;
+      line-height: 1.4;
+      user-select: none;
+      overflow: visible;
+      padding: 40px 30px 120px;
+      position: relative;
     }
 
+    .wish-container {
+      max-width: 420px;
+      padding: 25px 30px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      animation: fadeInUp 1s ease forwards;
+      font-style: italic;
+      color: #4a148c;
+      text-align: center;
+      z-index: 2;
+      font-size: 20px;
+      margin-bottom: 30px;
+      flex-shrink: 0;
+      user-select: text;
+      line-height: 1.3;
+    }
+
+    /* Hide wish box on front side */
+    .card:not(.opened) .wish-container {
+      display: none;
+    }
+
+    .wish-text {
+      margin: 0 0 12px 0;
+      font-weight: 600;
+    }
+
+    .wish-sender {
+      margin: 0;
+      font-weight: 400;
+      font-style: normal;
+      color: #7b4da0;
+      font-size: 18px;
+    }
+
+    /* Cake container anchored at bottom and hidden on front */
+    .cake-container {
+      width: 320px;
+      height: 160px;
+      perspective: 900px;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+
+    /* Hide cake on front */
+    .card:not(.opened) .cake-container {
+      display: none;
+    }
+
+    .cake {
+      position: relative;
+      width: 320px;
+      height: 140px;
+      background: linear-gradient(180deg, #f8c88c 0%, #d6862e 100%);
+      border-radius: 28px 28px 20px 20px;
+      box-shadow: inset 0 6px 10px rgba(255, 216, 140, 0.8),
+                  0 8px 22px rgba(173, 113, 0, 0.5);
+      transform-style: preserve-3d;
+      transform: rotateX(15deg);
+      overflow: visible;
+    }
+
+    /* Icing layer on top */
+    .cake-top {
+      position: absolute;
+      top: 0;
+      left: 10px;
+      width: 300px;
+      height: 30px;
+      background: linear-gradient(90deg, #fff8f0 0%, #f0e4d6 100%);
+      border-radius: 28px 28px 0 0;
+      box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.7);
+      z-index: 2;
+    }
+
+    /* Cake layers stacked */
+    .cake-layer {
+      position: absolute;
+      width: 300px;
+      height: 35px;
+      left: 10px;
+      background: linear-gradient(90deg, #fff3cc 0%, #f7e3a2 100%);
+      border-radius: 12px;
+      box-shadow: inset 0 3px 8px rgba(255, 240, 170, 0.9);
+      z-index: 1;
+    }
+    .layer1 { top: 30px; }
+    .layer2 { top: 65px; }
+    .layer3 { top: 100px; }
+
+    /* Candle container on top */
+    .candles {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    /* Candle style */
+    .candle {
+      width: 14px;
+      height: 50px;
+      background: linear-gradient(to top, #fff0f0, #ff6969);
+      border-radius: 3px;
+      position: relative;
+      box-shadow: 0 0 6px rgba(255, 120, 120, 0.9);
+      filter: drop-shadow(0 0 4px rgba(255, 120, 120, 0.6));
+      transition: transform 0.3s ease;
+    }
+    .candle:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(255, 50, 50, 1);
+    }
+
+    /* Flame */
+    .flame {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 26px;
+      background: radial-gradient(circle at 50% 50%, #ffd54f 35%, transparent 85%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: flicker 1.6s infinite ease-in-out;
+      filter: drop-shadow(0 0 6px #ffb300);
+      box-shadow: 0 0 6px 2px #ffca28;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    /* Flicker animation for flame */
+    @keyframes flicker {
+      0%, 100% {
+        transform: translateX(-50%) scale(1) translateY(0);
+        opacity: 1;
+      }
+      50% {
+        transform: translateX(-50%) scale(1.15) translateY(-4px);
+        opacity: 0.75;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating balloons outside */
     .floating-balloon {
       position: absolute;
       width: 40px;
@@ -203,6 +402,7 @@
       animation: floatUp 10s linear infinite;
       z-index: 0;
       opacity: 0.8;
+      filter: drop-shadow(0 0 5px #8e24aa);
     }
 
     .floating-balloon::after {
@@ -221,115 +421,193 @@
       20% { opacity: 1; }
       100% { bottom: 110vh; transform: translateX(30px); opacity: 0; }
     }
+
+    /* Crepe streamers decorations */
+    .crepe {
+      position: fixed;
+      top: 0;
+      width: 18px;
+      height: 100vh;
+      background: repeating-linear-gradient(
+        45deg,
+        #9c27b0,
+        #9c27b0 10px,
+        #ba68c8 10px,
+        #ba68c8 20px
+      );
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(156,39,176,0.6);
+      animation: sway 5s ease-in-out infinite;
+      z-index: 100;
+      transform-origin: top center;
+      filter: drop-shadow(0 0 3px #9c27b0);
+    }
+    .crepe.left {
+      left: 0;
+      animation-delay: 0s;
+    }
+    .crepe.right {
+      right: 0;
+      animation-delay: 2.5s;
+    }
+
+    @keyframes sway {
+      0%, 100% {
+        transform: rotate(5deg);
+      }
+      50% {
+        transform: rotate(-5deg);
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="happy-birthday-text" id="animatedText"></div>
+  <div id="customPanel" aria-label="Customize your birthday card">
+    <h3>Customize Your Card</h3>
+    <label>Recipient Name:
+      <input id="recipientName" type="text" placeholder="e.g. John" />
+    </label>
+    <label>Your Message:
+      <textarea id="customMessage" rows="3" placeholder="Write your birthday wish here"></textarea>
+    </label>
+    <label>Your Name:
+      <input id="senderName" type="text" placeholder="e.g. Jane" />
+    </label>
+    <label>Photo:
+      <input id="photoUpload" type="file" accept="image/*" />
+    </label>
+    <button onclick="applyCustomizations()">Preview</button>
+  </div>
+
+  <div class="happy-birthday-text" id="animatedText" aria-live="polite"></div>
+
+  <!-- Crepe decorations -->
+  <div class="crepe left" aria-hidden="true"></div>
+  <div class="crepe right" aria-hidden="true"></div>
 
   <div class="scene">
-    <div class="card" id="birthdayCard">
+    <div class="card" id="birthdayCard" role="button" aria-pressed="false" tabindex="0" aria-label="Birthday card, click to flip">
       <div class="card-front">
-        <h2>Wish You a Happy Birthday!!</h2>
-        <div class="photo-box">
-          <div class="corner-balloon balloon-top-left"></div>
-          <div class="corner-balloon balloon-top-right"></div>
-        </div>
-        <p style="margin-top: 20px; font-size: 16px; color: #555;">Click to open your birthday surprise!</p>
+        <h2 id="frontGreeting">Wish You a Happy Birthday!!</h2>
+        <div class="photo-box" aria-label="Recipient photo"></div>
+        <p>Click to see your wish</p>
       </div>
-      <div class="card-inside">
-        <div class="left-page" id="leftWishes"></div>
-        <div class="right-page" id="rightWishes"></div>
+      <div class="card-inside" id="cardBack" tabindex="-1" aria-live="polite">
+        <!-- Wish + Cake inserted dynamically -->
       </div>
     </div>
   </div>
 
-  <script>
-    const card = document.getElementById('birthdayCard');
-    const leftWishes = document.getElementById('leftWishes');
-    const rightWishes = document.getElementById('rightWishes');
+<script>
+  const card = document.getElementById('birthdayCard');
+  const cardBack = document.getElementById('cardBack');
+  const animatedText = document.getElementById("animatedText");
+  const frontGreeting = document.getElementById("frontGreeting");
 
-    const emojis = ["🎉", "🎈", "🥳", "✨", "🎁", "💖", "🍰", "💫", "🎂"];
-
-    const wishes = [
-      "Have a truly wonderful day!",
-      "Wishing you peace, joy, and success.",
-      "May your birthday be filled with happiness.",
-      "Enjoy your special day!",
-      "Your dedication is appreciated.",
-      "Warmest birthday wishes to you.",
-      "Wishing you continued achievements.",
-      "Have a joyful year ahead!",
-      "You're valued and respected.",
-      "Thank you for your leadership.",
-      "Many happy returns of the day.",
-      "May today be as amazing as you are.",
-      "Celebrating you and your work.",
-      "Here’s to more milestones!",
-      "Happy Birthday Madam!",
-      "You're an inspiration.",
-      "Wishing you strength and smiles.",
-      "Have a relaxing and blessed day.",
-      "Wishing you success and health.",
-      "Grateful to work with you.",
-      "More power and positivity to you.",
-      "You’re admired for all you do.",
-      "Happy moments ahead!",
-      "Cheers to your amazing journey.",
-      "Your impact is appreciated.",
-      "Thank you for everything!",
-      "A special wish for a special person.",
-      "May all your wishes come true.",
-      "Health, happiness & prosperity!",
-      "You make a difference daily-       from thiwanka."
-    ];
-
-    const leftWishesArr = wishes.slice(0, 15);
-    const rightWishesArr = wishes.slice(15, 30);
-
-    function renderWishes(container, wishesArray) {
-      wishesArray.forEach(text => {
-        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-        const wish = document.createElement('div');
-        wish.classList.add('wish');
-        wish.innerHTML = `${emoji} ${text} ${emoji}`;
-        container.appendChild(wish);
-      });
-    }
-
-    renderWishes(leftWishes, leftWishesArr);
-    renderWishes(rightWishes, rightWishesArr);
-
-    card.addEventListener('click', () => {
-      card.classList.toggle('opened');
-    });
-
-    // Heading animation
-    const text = "Wish You a Happy Birthday!!";
-    const headingContainer = document.getElementById("animatedText");
-
+  function animateHeading(text) {
+    animatedText.innerHTML = "";
     [...text].forEach((char, index) => {
       const span = document.createElement('span');
       span.textContent = char;
       span.style.animationDelay = `${index * 0.08}s`;
-      headingContainer.appendChild(span);
+      animatedText.appendChild(span);
     });
+  }
 
-    // Create floating balloons
-    function createFloatingBalloons() {
-      for (let i = 0; i < 25; i++) {
-        const balloon = document.createElement('div');
-        balloon.classList.add('floating-balloon');
-        balloon.style.left = Math.random() * 100 + 'vw';
-        balloon.style.bottom = '-80px';
-        balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 70%)`;
-        balloon.style.animationDelay = Math.random() * 8 + 's';
-        document.body.appendChild(balloon);
-      }
+  animateHeading("Wish You a Happy Birthday!!");
+
+  // Flip card on click or keyboard Enter/Space
+  card.addEventListener('click', toggleCard);
+  card.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleCard();
+    }
+  });
+
+  function toggleCard() {
+    card.classList.toggle('opened');
+    let pressed = card.classList.contains('opened');
+    card.setAttribute('aria-pressed', pressed);
+    if(pressed) {
+      cardBack.focus();
+    } else {
+      card.focus();
+    }
+  }
+
+  // Apply user inputs
+  function applyCustomizations() {
+    const name = document.getElementById("recipientName").value.trim() || "Friend";
+    const message = document.getElementById("customMessage").value.trim() || "Your wish";
+    const sender = document.getElementById("senderName").value.trim() || "Someone special";
+    const photoInput = document.getElementById("photoUpload");
+
+    // Update heading with recipient name
+    animateHeading(`Wish You a Happy Birthday, ${name}!!`);
+
+    // Update front greeting (just name)
+    frontGreeting.textContent = `Wish You a Happy Birthday, ${name}!!`;
+
+    // Update photo - clear if no file chosen
+    const photoBox = document.querySelector('.photo-box');
+    if(photoInput.files && photoInput.files[0]){
+      const reader = new FileReader();
+      reader.onload = function(e){
+        photoBox.style.backgroundImage = `url('${e.target.result}')`;
+      };
+      reader.readAsDataURL(photoInput.files[0]);
+    } else {
+      // Clear background if no photo selected
+      photoBox.style.backgroundImage = 'none';
     }
 
-    createFloatingBalloons();
-  </script>
+    // Build inside back content: wish + sender + cake
+    cardBack.innerHTML = `
+      <div class="wish-container" role="region" aria-label="Birthday wish message">
+        <p class="wish-text">"${message}"</p>
+        <p class="wish-sender">— From ${sender}</p>
+      </div>
+      <div class="cake-container" aria-hidden="true">
+        <div class="cake">
+          <div class="cake-top"></div>
+          <div class="cake-layer layer1"></div>
+          <div class="cake-layer layer2"></div>
+          <div class="cake-layer layer3"></div>
+          <div class="candles">
+            ${Array(7).fill(0).map(() => `
+              <div class="candle">
+                <div class="flame"></div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Make sure card is closed when applying new customization
+    card.classList.remove('opened');
+    card.setAttribute('aria-pressed', false);
+    card.focus();
+  }
+
+  // Initialize defaults on page load
+  applyCustomizations();
+
+  // Create floating balloons
+  function createFloatingBalloons() {
+    for (let i = 0; i < 25; i++) {
+      const balloon = document.createElement('div');
+      balloon.classList.add('floating-balloon');
+      balloon.style.left = Math.random() * 100 + 'vw';
+      balloon.style.bottom = '-80px';
+      balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 70%)`;
+      balloon.style.animationDelay = Math.random() * 8 + 's';
+      document.body.appendChild(balloon);
+    }
+  }
+  createFloatingBalloons();
+</script>
 
 </body>
 </html>
